@@ -27,9 +27,7 @@ public class MovimientoPlayer2 : MonoBehaviour
         controller = GetComponent<CharacterController>();
         piso1.SetActive(true);
         piso2.SetActive(false);
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        
     }
 
     private void Update()
