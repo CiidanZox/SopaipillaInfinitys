@@ -1,7 +1,6 @@
  using System;
  using System.Collections;
 using System.Collections.Generic;
- using UnityEditor.Animations;
  using UnityEngine;
  using UnityEngine.UI;
  using UnityEngine.SceneManagement;
@@ -18,7 +17,6 @@ public class MovimientoPlayer : MonoBehaviour
     public GameObject pared1;
     public GameObject pared4;
     public GameObject pauseMenu;
-    public GameObject playerModel; // Referencia al modelo del jugador
     public List<Image> lifeImages;
 
     private CharacterController controller;
