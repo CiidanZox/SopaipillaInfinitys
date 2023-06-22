@@ -19,21 +19,35 @@ public class MovimientoPlayer2 : MonoBehaviour
     private CharacterController controller;
     private bool isJumping = false;
     private Vector3 velocity;
+    private float mouseSensitivity = 2f;
+    private float verticalRotation = 0f;
 
     private void Start()
     {
         controller = GetComponent<CharacterController>();
         piso1.SetActive(true);
         piso2.SetActive(false);
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void Update()
     {
         float horizontalInput = Input.GetAxis("Vertical");
         float verticalInput = Input.GetAxis("Horizontal1");
+        verticalInput *= -1f;
 
-        Vector3 movement = new Vector3(horizontalInput * moveSpeed, 0f, verticalInput * moveSpeed);
+        Vector3 movement = new Vector3(verticalInput * moveSpeed, 0f, horizontalInput * moveSpeed);
+        movement = transform.TransformDirection(movement);
         controller.Move(movement * Time.deltaTime);
+        
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
+        transform.Rotate(0f, mouseX, 0f);
+        
+        verticalRotation -= Input.GetAxis("Mouse Y") * mouseSensitivity;
+        verticalRotation = Mathf.Clamp(verticalRotation, -90f, 90f); // Limitar la rotación vertical de la cámara
+        Camera.main.transform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f); // Rotar la cámara
         
         if (horizontalInput > 0)
         {
@@ -41,7 +55,7 @@ public class MovimientoPlayer2 : MonoBehaviour
         }
         else if (horizontalInput < 0)
         {
-            transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, -Mathf.Abs(transform.localScale.z));
+            transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, Mathf.Abs(transform.localScale.z));
         }
 
         if (controller.isGrounded)
