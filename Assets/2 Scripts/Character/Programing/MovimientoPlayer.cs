@@ -3,12 +3,14 @@
 using System.Collections.Generic;
  using UnityEditor.Animations;
  using UnityEngine;
+ using UnityEngine.UI;
+ using UnityEngine.SceneManagement;
 
 public class MovimientoPlayer : MonoBehaviour
 {
     public float moveSpeed = 5f;
     public float jumpForce = 5f;
-    public float jumpTrampo = 10f;
+    public float fuerzaTrampo = 10f;
     public float gravity = 20f;
     public GameObject boton1;
     public GameObject boton3;
@@ -16,11 +18,14 @@ public class MovimientoPlayer : MonoBehaviour
     public GameObject pared1;
     public GameObject pared4;
     public GameObject pauseMenu;
-
+    public GameObject playerModel; // Referencia al modelo del jugador
+    public List<Image> lifeImages;
 
     private CharacterController controller;
     private bool isJumping = false;
     private Vector3 velocity;
+    private int lives = 3;
+    private bool isBlinking = false;
 
     private void Start()
     {
@@ -49,7 +54,7 @@ public class MovimientoPlayer : MonoBehaviour
             controller.Move(Vector3.up * jumpForce * Time.deltaTime);
             isJumping = true;
         }
-        
+
         velocity.y -= gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
 
@@ -68,21 +73,19 @@ public class MovimientoPlayer : MonoBehaviour
 
     void Jump()
     {
-        velocity.y = Mathf.Sqrt(jumpTrampo * 2f * gravity);
-        controller.Move(Vector3.up * jumpTrampo * Time.deltaTime);
+        velocity.y = Mathf.Sqrt(fuerzaTrampo * 2f * gravity);
+        controller.Move(Vector3.up * fuerzaTrampo * Time.deltaTime);
         isJumping = true;
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.CompareTag("Trampolin"))
-        {
-            Jump();
-        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
+
+        if (other.CompareTag("Trampolin"))
+        {
+            Jump();
+        }
+        
         if (other.CompareTag("Boton1"))
         {
             Destroy(boton1);
@@ -98,6 +101,65 @@ public class MovimientoPlayer : MonoBehaviour
         if (other.CompareTag("Boton5"))
         {
             Destroy(boton5);
+            SceneManager.LoadScene("End");
+        }
+
+        if (other.CompareTag("Enemy"))
+        {
+            // Reducir las vidas y parpadear el personaje
+            lives--;
+            if (lives <= 0)
+            {
+                // Game over
+                SceneManager.LoadScene("Lost");
+            }
+            else
+            {
+                StartCoroutine(BlinkRoutine());
+                RemoveLifeImage();
+            }
+        }
+    }
+
+    IEnumerator BlinkRoutine()
+    {
+        if (isBlinking)
+            yield break;
+
+        isBlinking = true;
+
+        int blinkCount = 4;
+        float blinkDuration = 0.2f;
+        float blinkInterval = 0.2f;
+
+        List<Image> lifeImagesCopy = new List<Image>(lifeImages); // Crear una copia de la lista
+
+        foreach (Image lifeImage in lifeImagesCopy)
+        {
+
+            if (lifeImage != null)
+            {
+                lifeImage.enabled = false;
+                yield return new WaitForSeconds(blinkDuration);
+                lifeImage.enabled = true;
+                yield return new WaitForSeconds(blinkInterval);
+            }
+        }
+
+        isBlinking = false;
+    }
+
+    void RemoveLifeImage()
+    {
+        if (lifeImages.Count > 0)
+        {
+            Image lifeImage = lifeImages[lifeImages.Count - 1];
+            lifeImages.RemoveAt(lifeImages.Count - 1);
+
+            if (lifeImage != null)
+            {
+                Destroy(lifeImage.gameObject);
+            }
         }
     }
 }

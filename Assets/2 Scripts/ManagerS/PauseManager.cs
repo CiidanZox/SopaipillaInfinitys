@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,13 @@ public class PauseManager : MonoBehaviour
     public GameObject mapachePag;
     public GameObject chinchillaPag;
     public GameObject sonidoPag;
+    public GameObject tutoPag;
+
+    private void Start()
+    {
+        Time.timeScale = 0f;
+        tutoPag.SetActive(true);
+    }
 
     public void Opciones()
     {
@@ -71,4 +79,11 @@ public class PauseManager : MonoBehaviour
     {
         SceneManager.LoadScene("Menu");
     }
+
+    public void CerrarTutorial()
+    {
+        tutoPag.SetActive(false);
+        Time.timeScale = 1f;
+    }
+    
 }

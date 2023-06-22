@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/1 Escenas/End.unity
     guid: 14990be349205424fa19531e4e4abd45
+  - enabled: 1
+    path: Assets/1 Escenas/Lost.unity
+    guid: 2d2c54b9cf1ecb94db6e09f3ab0c0b89
   m_configObjects: {}
